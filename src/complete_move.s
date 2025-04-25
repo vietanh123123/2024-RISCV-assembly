@@ -1,5 +1,7 @@
 .text
 .globl complete_move
+.import "merge.s"
+.import "move_left.s"
 
 
 #
@@ -15,4 +17,19 @@
 
 
 complete_move:
+   mv t1, a0 # t1 = address of buffer
+   
+   jal move_left # Call move_left function
+
+   mv a0, t1 # Set a0 to the address of the buffer
+
+   jal merge # Call merge function
+
+   mv a0, t1 # Set a0 to the address of the buffer
+
+   jal move_left # Call move_left function
+
+
+
+end:
     jr ra

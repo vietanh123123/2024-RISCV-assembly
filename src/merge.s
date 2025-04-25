@@ -1,55 +1,52 @@
 .text
 .globl merge
-
+# a0 buffer address
+# a1 buffer length
 #
-#	a0 buffer address
-#	a1 buffer length
-#
-#	|----|----|----|----|		|----|----|----|----|
-#	|  2 |  2 |  0 |  4 |  => 	|  4 |  0 |  0 |  4 |
-#	|----|----|----|----|		|----|----|----|----|
+# |----|----|----|----| => |----|----|----|----| 
+# |  2 |  2 |  0 |  4 |    |  4 |  0 |  0 |  4 | 
+# |----|----|----|----| => |----|----|----|----| 
 #
 #   BONUS: Return the number of merges in a0 and the
 #          total base score of the merges in a1.
 
 merge:
     # Handle edge case: Need at least 2 elements to merge
-    li t5, 2
-    blt a1, t5, end
-
-  
-
-    li t0, 0              # Initialize counter to 0 
-    addi t5, a1, -1       # Set t5 to length - 1 
-                          
-loop:
-    bge t0, t5, end       # If counter  >= length-1, end 
-                          
+    li t6, 2
+    blt a1, t6, end
+     # Adress of the last element  since we just merge pairs = (a1 - 1) * 2 + a
+    mv t0, a0   #t0 holds the base address
+    addi t1, a1, -1
+    li t4, 2
+    mul t1, t1, t4 
+    add t1, t1, a0 #t1 holds the address of the last element
+check:
+    beq t0, t1, end # if t0 == t1, we are done
     
-    lh t1, 0(a0)          
-    lh t2, 2(a0)          
-
+    # we merge if the pair is equal and none of the elements is 0
+    lh t2 , 0(t0)  #t2 holds the first element
+    lh t3 , 2(t0)  #t3 holds the second element
+    beq t2, zero, go_next # if t2 == 0, skip to next pair
+    beq t3, zero, go_next # if t3 == 0, skip to next pair
+    bne t2, t3, go_next # if t2 != t3, skip to next pair 
     
-    beq t1, zero, next_pair
-    
-    beq t2, zero, next_pair
+    # merge the pair 
+    add t2, t2, t3 # t2 holds the new value
+    sh t2, 0(t0) # store the new value in the first element
+    sh zero, 2(t0) # set the second element to 0
 
-    bne t1, t2, next_pair
-   
+    # Check if this is the last pair 
+    addi t4, t0, 4 
+    beq t4, t1, end # if t4 == t1, we are done
 
-    #merge
-    add t1, t1, t2        
-    sh t1, 0(a0)          
-    sh zero, 2(a0)        
-   
+    addi t0, t0, 4 # move to the next pair
+    j check # jump to check again
 
-next_pair:
-    # Advance to the next pair
-    addi t0, t0, 1        
-    addi a0, a0, 2       
-    j loop               
+
+go_next: 
+    addi t0, t0, 2
+    j check # jump to check again
 
 end:
-    
-    
+      
     jr ra
