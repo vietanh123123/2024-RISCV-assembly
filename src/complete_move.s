@@ -17,18 +17,37 @@
 
 
 complete_move:
-   mv t1, a0 # t1 = address of buffer
    
+   mv t1, a0 # t1 = address of buffer
+   addi sp , sp , -8 
+   sw t1, 0(sp) # Store t1 on stack
+   sw ra, 4(sp) # Store return address on stack
+
    jal move_left # Call move_left function
 
+   lw t1, 0(sp) # Restore t1 from stack
+   lw ra, 4(sp) # Restore return address from stack
+
    mv a0, t1 # Set a0 to the address of the buffer
+   
+   sw t1, 0(sp) # Store t1 on stack
+   sw ra, 4(sp) # Store return address on stack
 
    jal merge # Call merge function
 
+   lw t1, 0(sp) # Restore t1 from stack
+   lw ra, 4(sp) # Restore return address from stack
+
    mv a0, t1 # Set a0 to the address of the buffer
 
-   jal move_left # Call move_left function
+   sw t1, 0(sp) # Store t1 on stack
+   sw ra, 4(sp) # Store return address on stack
 
+   jal move_left # Call move_left function
+   
+   lw t1, 0(sp) # Restore t1 from stack
+   lw ra, 4(sp) # Restore return address from stack
+   addi sp, sp, 8 # Restore stack pointer
 
 
 end:

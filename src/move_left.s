@@ -18,12 +18,25 @@
 move_left:
     mv t0 , a0         # t0 = address of buffer
     mv t1 , a1         # t1 = length of buffer
-loop:   
+loop: 
+    #Store t0, t1 in stack 
+    addi sp, sp, -12 # Decrease stack pointer
+    sw t0, 0(sp) # Store t0 on stack
+    sw t1, 4(sp) # Store t1 on stack 
+    sw ra, 8(sp) # Store return address on stack
+
     jal move_one # Call move_one function
+    
+    lw t0, 0(sp) # Restore t0 from stack
+    lw t1, 4(sp) # Restore t1 from stack
+    lw ra, 8(sp) # Restore return address from stack
+
+
     beq a0, zero, end # If no move was made, exit the loop
     mv a0, t0 # Set a0 to the address of the buffer
     j loop # Repeat the process
 
 
 end: 
+  addi sp, sp, 12 # Restore stack pointer 
   jr ra    

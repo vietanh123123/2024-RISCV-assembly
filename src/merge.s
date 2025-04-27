@@ -14,37 +14,33 @@ merge:
     # Handle edge case: Need at least 2 elements to merge
     li t6, 2
     blt a1, t6, end
-     # Adress of the last element  since we just merge pairs = (a1 - 1) * 2 + a
-    mv t0, a0   #t0 holds the base address
-    addi t1, a1, -1
-    li t4, 2
-    mul t1, t1, t4 
-    add t1, t1, a0 #t1 holds the address of the last element
+    
+    li t0, 1   # Counter for elements in the buffer
+    mv t1, a0  #Buffer address
+
 check:
-    beq t0, t1, end # if t0 == t1, we are done
+    beq t0, a1, end
     
     # we merge if the pair is equal and none of the elements is 0
-    lh t2 , 0(t0)  #t2 holds the first element
-    lh t3 , 2(t0)  #t3 holds the second element
-    beq t2, zero, go_next # if t2 == 0, skip to next pair
-    beq t3, zero, go_next # if t3 == 0, skip to next pair
-    bne t2, t3, go_next # if t2 != t3, skip to next pair 
+    lw t2 , 0(t1) # Address of the first element of the pair
+    lw t3 , 4(t1) #  Address of the second element of the pair
+    lh t4 , 0(t2) # load the value of the first element of the pair
+    lh t5 , 0(t3) # load the value of the second element of the pair
+    beq t4, zero, go_next # if the first element is 0, go to the next pair
+    beq t5, zero, go_next # if the second element is 0, go to the next pair
+    bne t4, t5, go_next # if the two elements are not equal, go to the next pair
+
     
     # merge the pair 
-    add t2, t2, t3 # t2 holds the new value
-    sh t2, 0(t0) # store the new value in the first element
-    sh zero, 2(t0) # set the second element to 0
-
-    # Check if this is the last pair 
-    addi t4, t0, 4 
-    beq t4, t1, end # if t4 == t1, we are done
-
-    addi t0, t0, 4 # move to the next pair
-    j check # jump to check again
+    add t4, t4, t5 # add the two elements
+    sh t4, 0(t2) # store the result in the first element of the pair
+    sh zero, 0(t3) # set the second element of the pair to 0
+    
 
 
 go_next: 
-    addi t0, t0, 2
+    addi t0, t0, 1
+    addi t1, t1, 4 # move to the next pair
     j check # jump to check again
 
 end:

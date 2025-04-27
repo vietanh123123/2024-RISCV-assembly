@@ -12,18 +12,18 @@
 #	a0 1 iff something changed else 0
 
 move_one:
-    # Check if length is less than 2,  need at least two tiles to compare
+    # Check if length is less than 2, 
     li t0, 2
     blt a1, t0, fail          # If length < 2, no move possible
 
-    mv t0, a0                 # t0 = address of pointer to previous tile (starts at index 0)
-    addi t1, a0, 4            # t1 = address of pointer to current tile (starts at index 1)
+    mv t0, a0                 # address of  previous tile 
+    addi t1, a0, 4            # t1 = address of  current tile 
 
    
-    slli t2, a1, 2            # t2 = length * 4 (byte offset of element *after* last)
-    add t2, a0, t2            # t2 = address *after* the last pointer entry
+    slli t2, a1, 2            # byte offset 
+    add t2, a0, t2            # t2 = address after the last pointer entry
 
-    li a0, 0                  # Initialize return value to 0 (no move yet)
+    li a0, 0                  
 
 loop_check_pair:
     # Load address and value of the previous tile 
@@ -47,19 +47,17 @@ loop_check_pair:
 
 next_pair:
     # Advance pointers to the next pair
-    addi t0, t0, 4            # Move t0 to the next buffer entry 
-    addi t1, t1, 4            # Move t1 to the next buffer entry 
+    addi t0, t0, 4           
+    addi t1, t1, 4            
 
     # Check if we have processed the last possible pair 
    
     blt t1, t2, loop_check_pair # If t1 < address_after_last, continue loop
-
-    # If loop finishes without finding a suitable pair, a0 is still 0
+    
     j end
 
-fail: 
-    
-    li a0, 0                 
+fail:
+   li a0, 0 
 
 end: 
     jr ra                   
