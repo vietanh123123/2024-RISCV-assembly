@@ -17,7 +17,7 @@ move_check:
     blt a1, t0, fail         # If length < 2, no move possible
 
     mv t0, a0 # t0 = address of buffer
-    li t1 1 # t1 = 1 (counter for elements in the buffer)
+    li t1, 1 # t1 = 1 (counter for elements in the buffer)
     
     li a0 , 0 # a0 = 0 (default value for no move possible)
     
@@ -25,6 +25,7 @@ move_check:
     lh t3 , 0(t2) # load the value of the first element of the buffer
     
     addi t0, t0, 4 # move to the next element of the buffer
+    addi t1, t1, 1 # increment the counter
     bne t3, zero, case2 # if the first element is not 0, go to case2
 
 case1:    
@@ -33,6 +34,7 @@ case1:
     lw t2 , 0(t0) # address of the current element of the buffer
     lh t3 , 0(t2) # load the value of the current element of the buffer
     addi t0 , t0, 4 # move to the next element of the buffer
+    addi t1 , t1, 1 # increment the counter
     beq t3, zero, case1 # if the current element is 0, loop again 
     li a0 , 1 # if the current element is not 0, set a0 to 1 (move possible)
     j end
@@ -45,6 +47,7 @@ case2:
     lw t2 , 0(t0) # address of the current element of the buffer
     lh t3 , 0(t2) # load the value of the current element of the buffer
     addi t0 , t0, 4 # move to the next element of the buffer
+    addi t1 , t1, 1 # increment the counter
     bne t3, zero, case2 # if the current element is not 0, loop again
 
     # Check if this 0 is the last element

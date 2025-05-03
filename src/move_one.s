@@ -20,8 +20,7 @@ move_one:
     addi t1, a0, 4            # t1 = address of  current tile 
 
    
-    slli t2, a1, 2            # byte offset 
-    add t2, a0, t2            # t2 = address after the last pointer entry
+    li t2, 1                # t2 = 1 (counter for elements in the buffer)
 
     li a0, 0                  
 
@@ -49,11 +48,11 @@ next_pair:
     # Advance pointers to the next pair
     addi t0, t0, 4           
     addi t1, t1, 4            
+    addi t2, t2, 1            # Increment the counter
 
     # Check if we have processed the last possible pair 
    
-    blt t1, t2, loop_check_pair # If t1 < address_after_last, continue loop
-    
+    blt t2, a1, loop_check_pair # If t2 >= length, exit loop    
     j end
 
 fail:

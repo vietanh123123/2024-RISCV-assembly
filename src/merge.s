@@ -11,6 +11,12 @@
 #          total base score of the merges in a1.
 
 merge:
+    addi sp, sp, -8 
+    sw s0, 0(sp) # Store s0 on stack
+    sw s1, 4(sp) # Store s1 on stack
+    li s0, 0 # Initialize s0 to 0 (number of merges)
+    li s1, 0 # Initialize s1 to 0 (total base score of merges)
+
     # Handle edge case: Need at least 2 elements to merge
     li t6, 2
     blt a1, t6, end
@@ -35,7 +41,9 @@ check:
     add t4, t4, t5 # add the two elements
     sh t4, 0(t2) # store the result in the first element of the pair
     sh zero, 0(t3) # set the second element of the pair to 0
-    
+
+    addi s0, s0, 1 # increment the number of merges
+    add s1, s1, t4 # add the score of the merge to the total score    
 
 
 go_next: 
@@ -44,5 +52,9 @@ go_next:
     j check # jump to check again
 
 end:
-      
+    mv a0, s0 # return the number of merges in a0
+    mv a1, s1 # return the total base score of merges in a1
+    lw s0, 0(sp) # Restore s0 from stack
+    lw s1, 4(sp) # Restore s1 from stack
+    addi sp, sp, 8 # Restore stack pointer
     jr ra
