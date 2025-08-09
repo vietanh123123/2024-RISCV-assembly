@@ -78,7 +78,7 @@ random.seed()
 #            "src/move_one.asm", "src/place.asm", "src/printboard.asm", "src/points.asm", "src/util.asm", ]
 # proc = subprocess.Popen(["./mars", "ae127", "se126", "me", "nc", "sm", "10000000"] + SOURCES, stdin=subprocess.PIPE,
 #                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='UTF-8')
-proc = subprocess.Popen(["./venus", "src/main.s"], stdin=subprocess.PIPE,
+proc = subprocess.Popen(["java", "-jar", "venus-61c.dev.jar", "src/main.s"], stdin=subprocess.PIPE,
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='UTF-8')
 
 #reade and write in- and output of the MIPS-program
